@@ -16,7 +16,7 @@
 	},
 	"repository": {
 	"type": "git",
-	"url": "git+https://github.com/dcohen/n8n-nodes-conexteo.git"
+	"url": "git+https://github.com/conexteo/n8n-nodes-conexteo.git"
 	},
 	"scripts": {
 		"build": "n8n-node build",
