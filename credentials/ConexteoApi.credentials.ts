@@ -2,9 +2,7 @@
 import {
 	ICredentialType,
 	INodeProperties,
-	ICredentialTestResponse,
-	IExecuteSingleFunctions,
-	IHttpRequestOptions,
+	ICredentialTestRequest,
 } from 'n8n-workflow';
 
 export class ConexteoApi implements ICredentialType {
@@ -46,23 +44,10 @@ export class ConexteoApi implements ICredentialType {
 		},
 	} as any;
 
-	async test(this: IExecuteSingleFunctions): Promise<ICredentialTestResponse> {
-		const options: IHttpRequestOptions = {
-			method: 'GET',
-			url: 'https://api.conexteo.com/users/credits',
-			json: true,
-		};
-		try {
-			await this.helpers.httpRequestWithAuthentication.call(this, 'conexteoApi', options);
-			return {
-				status: 'OK',
-				message: 'Connexion réussie !',
-			};
-		} catch (error: any) {
-			return {
-				status: 'Error',
-				message: `Erreur de connexion : ${error.message}`,
-			};
-		}
-	}
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL: 'https://api.conexteo.com',
+			url: '/users/credits',
+		},
+	};
 }
