@@ -4,7 +4,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	IWebhookResponseData,
-	any,
+	
 } from 'n8n-workflow';
 
 export class ConexteoTrigger implements INodeType {

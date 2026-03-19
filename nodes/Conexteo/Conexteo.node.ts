@@ -5,7 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	NodeOperationError,
-	IDataObject,
+	
 } from 'n8n-workflow';
 
 export class Conexteo implements INodeType {
