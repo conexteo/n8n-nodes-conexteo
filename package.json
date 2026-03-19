@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-conexteo",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Nœud n8n officiel pour l'API Conexteo (SMS, RCS, Contacts)",
   "license": "MIT",
   "homepage": "https://www.conexteo.com",
@@ -44,7 +44,7 @@
     "change-case": "4.1.2"
   },
   "devDependencies": {
-    "@n8n/node-cli": "*",
+    "@n8n/node-cli": "0.12.0",
     "eslint": "8.57.0",
     "prettier": "3.2.5",
     "release-it": "^17.1.1",
