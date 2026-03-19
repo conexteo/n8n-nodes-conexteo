@@ -1,6 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-    IAuthenticateGeneric,
-    ICredentialTestRequest,
     ICredentialType,
     INodeProperties,
 } from 'n8n-workflow';
