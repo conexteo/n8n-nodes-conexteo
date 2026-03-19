@@ -1,0 +1,35 @@
+name: Publish to npm
+
+# Le robot s'activera quand tu publieras une "Release" sur GitHub ou manuellement
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # ⚠️ La ligne magique obligatoire pour la "Provenance" npm !
+    
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+      
+      - name: Installation de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Installation des dépendances
+        run: npm install
+        
+      - name: Compilation du nœud n8n
+        run: npm run build
+        
+      - name: Publication officielle sur npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
