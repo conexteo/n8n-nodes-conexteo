@@ -1,0 +1,52 @@
+{
+	"name": "n8n-nodes-conexteo",
+	"version": "0.0.3",
+	"description": "Nœud n8n non-officiel pour l'API Conexteo (SMS, RCS, Contacts)",
+	"license": "MIT",
+	"homepage": "https://www.conexteo.com",
+	"keywords": [
+		"n8n-community-node-package",
+		"envoi sms",
+		"envoi rcs",
+		"gestion contacts"
+	],
+	"author": {
+		"name": "Dan Conexteo",
+		"email": "contact@conexteo.com"
+	},
+	"repository": {
+	"type": "git",
+	"url": "git+https://github.com/dcohen/n8n-nodes-conexteo.git"
+	},
+	"scripts": {
+		"build": "n8n-node build",
+		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix",
+		"release": "n8n-node release"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/ConexteoApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Conexteo.node.js",
+      "dist/nodes/ConexteoTrigger.node.js"
+    ]
+  },
+	"devDependencies": {
+		"@n8n/node-cli": "*",
+		"eslint": "9.32.0",
+		"prettier": "3.6.2",
+		"release-it": "^19.0.4",
+		"typescript": "5.9.2"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	}
+}
