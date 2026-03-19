@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-conexteo",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Nœud n8n officiel pour l'API Conexteo (SMS, RCS, Contacts)",
   "license": "MIT",
   "homepage": "https://www.conexteo.com",
