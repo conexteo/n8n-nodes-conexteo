@@ -39,6 +39,9 @@
       "dist/nodes/ConexteoTrigger.node.js"
     ]
   },
+  "overrides": {
+    "change-case": "4.1.2"
+  },
 	"devDependencies": {
 		"@n8n/node-cli": "*",
 		"eslint": "9.32.0",
