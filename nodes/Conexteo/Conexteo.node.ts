@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
 	IExecuteFunctions,
 	INodeExecutionData,
@@ -366,7 +367,7 @@ export class Conexteo implements INodeType {
 		const resource = this.getNodeParameter('resource', 0) as string;
 		
 		for (let i = 0; i < items.length; i++) {
-			let body: IDataObject = {};
+			let body: any = {};
 			let endpointUrl = '';
 			
 			try {
@@ -386,7 +387,7 @@ export class Conexteo implements INodeType {
 						const nom = this.getNodeParameter('contactName', i) as string;
 						const prenom = this.getNodeParameter('contactFirstName', i) as string;
 
-						const contactObj: IDataObject = { tel: phone };
+						const contactObj: any = { tel: phone };
 						if (nom) contactObj.champ_nom = nom;
 						if (prenom) contactObj.champ_prenom = prenom;
 
@@ -431,10 +432,10 @@ export class Conexteo implements INodeType {
 							if (title) body.data.title = title;
 							if (description) body.data.description = description;
 
-							const cardButtonsWrapper = this.getNodeParameter('cardButtons', i, {}) as IDataObject;
+							const cardButtonsWrapper = this.getNodeParameter('cardButtons', i, {}) as any;
 							const buttonsData = cardButtonsWrapper?.button || [];
 							if (buttonsData.length > 0) {
-								body.data.choices = buttonsData.map((btn: IDataObject) => ({
+								body.data.choices = buttonsData.map((btn: any) => ({
 									type: btn.type,
 									title: btn.title,
 									...(btn.type === 'url' ? { url: btn.value } : { phoneNumber: btn.value })
@@ -443,10 +444,10 @@ export class Conexteo implements INodeType {
 							defaultFallbackText = "Message multimédia non supporté.";
 
 						} else if (rcsType === 'carousel') {
-							const carouselWrapper = this.getNodeParameter('carouselCards', i, {}) as IDataObject;
+							const carouselWrapper = this.getNodeParameter('carouselCards', i, {}) as any;
 							const cardsArray = carouselWrapper?.card || [];
 
-							const formattedCards = cardsArray.map((c: IDataObject) => {
+							const formattedCards = cardsArray.map((c: any) => {
 								const cardChoices = [];
 								if (c.btn1Type !== 'none') cardChoices.push({ type: c.btn1Type, title: c.btn1Title, ...(c.btn1Type === 'url' ? { url: c.btn1Value } : { phoneNumber: c.btn1Value }) });
 								if (c.btn2Type !== 'none') cardChoices.push({ type: c.btn2Type, title: c.btn2Title, ...(c.btn2Type === 'url' ? { url: c.btn2Value } : { phoneNumber: c.btn2Value }) });

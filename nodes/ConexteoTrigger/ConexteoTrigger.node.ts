@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
 	IWebhookFunctions,
 	INodeType,
 	INodeTypeDescription,
 	IWebhookResponseData,
-	IDataObject,
+	any,
 } from 'n8n-workflow';
 
 export class ConexteoTrigger implements INodeType {
@@ -47,7 +48,7 @@ export class ConexteoTrigger implements INodeType {
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		// Utilisation de la méthode standard n8n pour récupérer le JSON
-		const bodyData = this.getBodyData() as IDataObject;
+		const bodyData = this.getBodyData() as any;
 		const keywordsString = this.getNodeParameter('keywords', '') as string;
 
 		// Si le serveur Conexteo nous envoie une requête vide, on l'ignore
