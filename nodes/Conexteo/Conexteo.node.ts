@@ -8,6 +8,25 @@ import {
 	
 } from 'n8n-workflow';
 
+const BUTTON_TYPES = [
+	{ name: 'Appel', value: 'call' },
+	{ name: 'Réponse Proposée', value: 'text' },
+	{ name: 'URL', value: 'url' },
+];
+
+const BUTTON_VALUE_DESCRIPTION =
+	'URL : l\'adresse à ouvrir. Appel : le numéro à appeler. Réponse proposée : valeur postback facultative, jamais affichée, restituée par le Conexteo Trigger (postback_data).';
+
+/** Bouton au format de l'API Conexteo. */
+function toApiChoice(type: string, title: string, value: string): any {
+	if (type === 'text') {
+		const choice: any = { type: 'text', text: title };
+		if (value) choice.postback_data = value;
+		return choice;
+	}
+	return { type, title, ...(type === 'url' ? { url: value } : { phoneNumber: value }) };
+}
+
 export class Conexteo implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Conexteo',
@@ -190,6 +209,23 @@ export class Conexteo implements INodeType {
 				displayOptions: { show: { resource: ['rcs'], operation: ['send'], rcsMessageType: ['text'] } },
 				default: false,
 			},
+			{
+				displayName: 'Boutons',
+				name: 'textButtons',
+				type: 'fixedCollection',
+				placeholder: 'Add a button',
+				typeOptions: { multipleValues: true },
+				displayOptions: { show: { resource: ['rcs'], operation: ['send'], rcsMessageType: ['text'] } },
+				default: {},
+				description: '10 boutons au plus sous le texte',
+				options: [{
+					name: 'button', displayName: 'Bouton', values: [
+						{ displayName: 'Type', name: 'type', type: 'options', options: BUTTON_TYPES, default: 'text' },
+						{ displayName: 'Titre', name: 'title', type: 'string', default: '', description: '25 caractères au plus' },
+						{ displayName: 'Valeur', name: 'value', type: 'string', default: '', description: BUTTON_VALUE_DESCRIPTION },
+					],
+				}],
+			},
 
 			// --- RCS CARD ---
 			{
@@ -224,9 +260,9 @@ export class Conexteo implements INodeType {
 				default: {},
 				options: [{
 					name: 'button', displayName: 'Bouton', values: [
-						{ displayName: 'Type', name: 'type', type: 'options', options: [{ name: 'URL', value: 'url' }, { name: 'Appel', value: 'call' }], default: 'url' },
-						{ displayName: 'Titre', name: 'title', type: 'string', default: '' },
-						{ displayName: 'Valeur', name: 'value', type: 'string', default: '' },
+						{ displayName: 'Type', name: 'type', type: 'options', options: BUTTON_TYPES, default: 'url' },
+						{ displayName: 'Titre', name: 'title', type: 'string', default: '', description: '25 caractères au plus' },
+						{ displayName: 'Valeur', name: 'value', type: 'string', default: '', description: BUTTON_VALUE_DESCRIPTION },
 					],
 				}],
 			},
@@ -265,6 +301,10 @@ export class Conexteo implements INodeType {
 																																					name: 'Appel',
 																																					value: 'call',
 																																				},
+									{
+										name: 'Réponse Proposée',
+										value: 'text',
+									},
 																																			],
 																																	default: 'none',
 																																},
@@ -297,6 +337,10 @@ export class Conexteo implements INodeType {
 																																					name: 'Appel',
 																																					value: 'call',
 																																				},
+									{
+										name: 'Réponse Proposée',
+										value: 'text',
+									},
 																																		],
 																																	default: 'none',
 																																},
@@ -423,6 +467,11 @@ export class Conexteo implements INodeType {
 							const contentText = this.getNodeParameter('contentRcsText', i) as string;
 							const addStop = this.getNodeParameter('addStopMentionRcs', i, false) as boolean;
 							body.data = { text: addStop ? `${contentText}\nPour vous désabonner, répondez STOP` : contentText };
+							const textButtonsWrapper = this.getNodeParameter('textButtons', i, {}) as any;
+							const textButtons = (textButtonsWrapper?.button || []).filter((btn: any) => btn.title);
+							if (textButtons.length > 0) {
+								body.data.choices = textButtons.map((btn: any) => toApiChoice(btn.type, btn.title, btn.value));
+							}
 							defaultFallbackText = contentText;
 
 						} else if (rcsType === 'card') {
@@ -435,11 +484,7 @@ export class Conexteo implements INodeType {
 							const cardButtonsWrapper = this.getNodeParameter('cardButtons', i, {}) as any;
 							const buttonsData = cardButtonsWrapper?.button || [];
 							if (buttonsData.length > 0) {
-								body.data.choices = buttonsData.map((btn: any) => ({
-									type: btn.type,
-									title: btn.title,
-									...(btn.type === 'url' ? { url: btn.value } : { phoneNumber: btn.value })
-								}));
+								body.data.choices = buttonsData.map((btn: any) => toApiChoice(btn.type, btn.title, btn.value));
 							}
 							defaultFallbackText = "Message multimédia non supporté.";
 
@@ -449,8 +494,8 @@ export class Conexteo implements INodeType {
 
 							const formattedCards = cardsArray.map((c: any) => {
 								const cardChoices = [];
-								if (c.btn1Type !== 'none') cardChoices.push({ type: c.btn1Type, title: c.btn1Title, ...(c.btn1Type === 'url' ? { url: c.btn1Value } : { phoneNumber: c.btn1Value }) });
-								if (c.btn2Type !== 'none') cardChoices.push({ type: c.btn2Type, title: c.btn2Title, ...(c.btn2Type === 'url' ? { url: c.btn2Value } : { phoneNumber: c.btn2Value }) });
+								if (c.btn1Type !== 'none') cardChoices.push(toApiChoice(c.btn1Type, c.btn1Title, c.btn1Value));
+								if (c.btn2Type !== 'none') cardChoices.push(toApiChoice(c.btn2Type, c.btn2Title, c.btn2Value));
 								return {
 									media_message_url: c.media_message_url,
 									...(c.title ? { title: c.title } : {}),

@@ -31,6 +31,18 @@ export class ConexteoApi implements ICredentialType {
 			required: true,
 			description: 'La clé API de votre compte Conexteo',
 		},
+		{
+			displayName: 'Secret De Signature Des Webhooks',
+			name: 'signingSecret',
+			type: 'string',
+			typeOptions: {
+				password: true,
+			},
+			default: '',
+			placeholder: 'whsec_...',
+			description:
+				'Facultatif, utilisé par le Conexteo Trigger. Le secret whsec_… affiché une seule fois dans votre espace Conexteo (Développeurs > Webhooks) quand vous activez le mode signé. Laissez vide pour accepter les webhooks non signés.',
+		},
 	];
 
 	authenticate = {
