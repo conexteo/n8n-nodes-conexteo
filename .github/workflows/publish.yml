@@ -1,6 +1,9 @@
 name: Publish to npm
 
-# Le robot s'activera quand tu publieras une "Release" sur GitHub ou manuellement
+# Se lance quand une "Release" est publiée sur GitHub, ou manuellement.
+# Publication sans jeton : npm fait confiance à ce dépôt et à ce fichier
+# (Trusted Publisher, réglé dans les paramètres du paquet sur npmjs.com).
+# Ne pas renommer ce fichier sans mettre à jour ce réglage.
 on:
   release:
     types: [published]
@@ -11,25 +14,27 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write # ⚠️ La ligne magique obligatoire pour la "Provenance" npm !
-    
+      id-token: write # obligatoire : identité OIDC pour npm (publication + provenance)
+
     steps:
       - name: Récupération du code
         uses: actions/checkout@v4
-      
+
       - name: Installation de Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
-          
+
+      # La publication sans jeton exige npm 11.5.1 ou plus récent
+      - name: Mise à jour de npm
+        run: npm install -g npm@latest
+
       - name: Installation des dépendances
         run: npm install
-        
+
       - name: Compilation du nœud n8n
         run: npm run build
-        
+
       - name: Publication officielle sur npm
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
